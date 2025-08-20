@@ -1,0 +1,61 @@
+constants:
+  file:
+    upload-directory: D:/ParkDoheum/2025/2025-04-msa/upload/greengram_profile
+    profile-pic: /profile
+  jwt:
+    issuer: green@green.com
+    schema: Bearer
+    bearer-format: JWT
+
+    claim-key: signedUser
+    header-key: Authorization
+    secret-key: DaeguGreenArtAcademyClass502RoomForJavaSpringBootFighting
+
+    access-token-cookie-name: access-token
+    access-token-cookie-path: /
+    access-token-cookie-validity-seconds: 900 # 15 mins (s): 60 * 15
+    access-token-validity-milliseconds: 900_000 # 15 mins (ms): 60 * 15 * 1000
+
+    refresh-token-cookie-name: refresh-token
+    refresh-token-cookie-path: /api/auth/reissue
+    refresh-token-cookie-validity-seconds: 1_296_000 # 15 days (s): 60 * 60 * 24 * 15
+    refresh-token-validity-milliseconds: 1_296_000_000 # 15 days (ms): 60 * 60 * 24 * 15 * 1000
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8888/eureka
+
+server:
+  port: 8081
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: greengram-user
+  datasource:
+    url: jdbc:log4jdbc:mariadb://localhost/greengram_user
+    username: root
+    password: green502
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+  jackson:
+    default-property-inclusion: non_null #응답 JSON을 만들 때 null인 속성은 제외한다.
+    deserialization:
+      fail-on-unknown-properties: false
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        format_sql: true
+        order_updates: true
+

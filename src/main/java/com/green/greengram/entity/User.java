@@ -1,0 +1,49 @@
+package com.green.greengram.entity;
+
+import com.green.greengram.configuration.enumcode.model.EnumUserRole;
+import io.hypersistence.utils.hibernate.id.Tsid;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity //테이블을 만들고 DML때 사용
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+public class User extends UpdatedAt {
+    @Id
+    @Tsid
+    private Long userId;
+
+    @Column(nullable = false, length = 50, unique = true)
+    private String uid;
+
+    @Column(nullable = false, length = 100)
+    private String upw;
+
+    @Column(length = 30)
+    private String nickName; //nick_name
+
+    @Column(length = 100)
+    private String pic;
+
+    //cascade는 자식과 나랑 모든 연결 (내가 영속성되면 자식도 영속성되고, 내가 삭제되면 자식도 삭제 된다. 등등)
+    //ohphanRemoval은 userRoles에서 자식을 하나 제거함. 그러면 DB에도 뺀 자식은 삭제처리가 된다.
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserRole> userRoles = new ArrayList<>(1);
+
+    public void addUserRoles(List<EnumUserRole> enumUserRole) {
+        for(EnumUserRole e : enumUserRole) {
+            UserRoleIds ids = new UserRoleIds(this.userId, e);
+            UserRole userRole = new UserRole(ids, this);
+
+            this.userRoles.add(userRole);
+        }
+    }
+}
