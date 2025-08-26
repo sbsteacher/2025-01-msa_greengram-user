@@ -1,29 +1,36 @@
-file:
-  directory: /home/download/auth
+constants:
+  file:
+    upload-directory: /home/download
 
 eureka:
   client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8888/eureka
-    instance:
-      instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+    enabled: false
 
 server:
-  port: 0
-  servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
 
 spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+        all-namespaces: false
+    loadbalancer:
+      enabled: true
+
   datasource:
-    url: jdbc:log4jdbc:mariadb://192.168.0.144/db_even_first_5
-    username: even_first_5
-    password: gggg
+    url: jdbc:log4jdbc:mariadb://user-db.greengram-db.svc.cluster.local/greengram_user
+    username: root
+    password: green502
+
   jpa:
     hibernate:
       ddl-auto: none
+
 

@@ -1,9 +1,9 @@
 package com.green.greengram.application.user;
 
-
 import com.green.greengram.application.user.model.*;
 import com.green.greengram.configuration.jwt.JwtTokenManager;
 import com.green.greengram.configuration.model.ResultResponse;
+import com.green.greengram.configuration.model.SignedUser;
 import com.green.greengram.configuration.model.UserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -56,10 +56,11 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResultResponse<?> getProfileUser(@AuthenticationPrincipal UserPrincipal userPrincipal
-            , @RequestParam("profile_user_id") long profileUserId) {
+    public ResultResponse<?> getProfileUser(@AuthenticationPrincipal SignedUser signedUser
+                                          , @RequestParam("profile_user_id") long profileUserId) {
+        log.info("signedUser: {}", signedUser);
         log.info("profileUserId: {}", profileUserId);
-        UserProfileGetDto dto = new UserProfileGetDto(userPrincipal.getSignedUserId(), profileUserId);
+        UserProfileGetDto dto = new UserProfileGetDto(signedUser.signedUserId, profileUserId);
         UserProfileGetRes userProfileGetRes = userService.getProfileUser(dto);
         return new ResultResponse<>("프로파일 유저 정보", userProfileGetRes);
     }
@@ -85,6 +86,7 @@ public class UserController {
     public ResultResponse<?> getUserList(@RequestParam(name = "writer_user_id") List<Long> writerUserIdList) {
         log.info("writerUserIdList: {}", writerUserIdList);
         Map<Long, UserGetItem> result = userService.getUserList(writerUserIdList);
+        //List<UserGetItem>
         return new ResultResponse<>(String.format("rows: %d", result.size()), result);
     }
 }

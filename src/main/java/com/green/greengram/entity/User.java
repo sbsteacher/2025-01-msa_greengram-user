@@ -16,9 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class User extends UpdatedAt {
-    @Id
-    @Tsid
+    @Id @Tsid
     private Long userId;
+
+    @Column(nullable = false, length = 2)
+    private SignInProviderType providerType;
 
     @Column(nullable = false, length = 50, unique = true)
     private String uid;

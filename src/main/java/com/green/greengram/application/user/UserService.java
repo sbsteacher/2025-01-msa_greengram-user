@@ -5,6 +5,7 @@ import com.green.greengram.application.user.model.*;
 import com.green.greengram.configuration.enumcode.model.EnumUserRole;
 import com.green.greengram.configuration.model.JwtUser;
 import com.green.greengram.configuration.util.MyFileManager;
+import com.green.greengram.entity.SignInProviderType;
 import com.green.greengram.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +35,7 @@ public class UserService {
 
         User user = User.builder()
                 .nickName(req.getNickName())
+                .providerType(SignInProviderType.LOCAL)
                 .uid(req.getUid())
                 .upw(hashedPassword)
                 .build();
@@ -48,7 +51,7 @@ public class UserService {
     }
 
     public UserSignInDto signIn(UserSignInReq req) {
-        User user = userRepository.findByUid(req.getUid()); //일치하는 아이디가 있는지 확인, null이 넘어오면 uid가 없음
+        User user = userRepository.findByUidAndProviderType(req.getUid(), SignInProviderType.LOCAL); //일치하는 아이디가 있는지 확인, null이 넘어오면 uid가 없음
         //passwordEncoder 내부에는 jbcrypt 객체가 있다.
         if(user == null || !passwordEncoder.matches(req.getUpw(), user.getUpw())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "아이디/비밀번호를 확인해 주세요.");
@@ -66,7 +69,6 @@ public class UserService {
 
         log.info("roles: {}", roles);
         JwtUser jwtUser = new JwtUser(user.getUserId(), roles);
-
 
         UserSignInRes userSignInRes = UserSignInRes.builder()
                 .userId(user.getUserId()) //프로필 사진 표시 때 사용
@@ -110,11 +112,27 @@ public class UserService {
                 Collectors.toMap(
                     item -> item.getUserId(),
                     item -> UserGetItem.builder()
-                                        .writerUid(item.getUid())
-                                        .writerNickName(item.getNickName())
-                                        .writerPic(item.getPic())
-                                        .build()
+                                       .writerUid(item.getUid())
+                                       .writerNickName(item.getNickName())
+                                       .writerPic(item.getPic())
+                                       .build()
                 )
         );
+    }
+
+    public void exam(List<Long> writerUserIdList) {
+        List<User> userList = userRepository.findAllById(writerUserIdList);
+
+        Map<Long, UserGetItem> map = new HashMap<>();
+        for(User item : userList) {
+            UserGetItem userGetItem = UserGetItem.builder()
+                                                .writerUid(item.getUid())
+                                                .writerNickName(item.getNickName())
+                                                .writerPic(item.getPic())
+                                                .build();
+
+            map.put(item.getUserId(), userGetItem);
+        }
+
     }
 }
