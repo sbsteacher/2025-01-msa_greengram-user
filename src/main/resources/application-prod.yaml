@@ -23,12 +23,11 @@ spring:
     kubernetes:
       discovery:
         enabled: true
-        all-namespaces: false
-    loadbalancer:
-      enabled: true
-
+      reload:
+        enabled: true
+        strategy: refresh
   datasource:
-    url: jdbc:log4jdbc:mariadb://user-db.greengram-db.svc.cluster.local/greengram_user
+    url: jdbc:log4jdbc:mariadb://192.168.0.74/greengram_user
     username: root
     password: green502
 
