@@ -10,10 +10,13 @@ server:
   port: 8080
 
 management:
+  endpoint:
+    health:
+      show-details: always
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health
 
 spring:
   cloud:
@@ -31,6 +34,6 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
 
 

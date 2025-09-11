@@ -17,6 +17,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @Configuration
 @EnableJpaAuditing //auditing 기능 활성화
-@EnableDiscoveryClient
 @ConfigurationPropertiesScan
 public class AnnotationConfiguration {}

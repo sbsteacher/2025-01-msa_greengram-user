@@ -19,7 +19,6 @@ import java.io.IOException;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class UserHeaderAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
