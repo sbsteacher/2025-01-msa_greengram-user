@@ -43,7 +43,6 @@ public class CookieUtils {
                     .httpOnly(true)
                     .secure(true) //https일 때만 쿠키 전송된다.
                     .maxAge(maxAge)
-                    .domain("greenart.n-e.kr")
                     .build();
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
