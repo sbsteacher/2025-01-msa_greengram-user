@@ -12,6 +12,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
 
+import java.util.Arrays;
 import java.util.Base64;
 
 //쿠키에 데이터 담고 빼고 할 때 사용하는 객체
@@ -35,8 +36,9 @@ public class CookieUtils {
      */
     public void setCookie(HttpServletResponse response, String name, String value, int maxAge, String path) {
         String[] activeProfiles = environment.getActiveProfiles();
-        log.info("profile: {}", activeProfiles[0]);
-        if(activeProfiles[0].equals("prod")) {
+
+        if(Arrays.asList(activeProfiles).contains("prod")) {
+            log.info("CookieUtils - 프로파일에 prod가 있음");
             ResponseCookie cookie = ResponseCookie.from(name, value)
                     .path(path)
                     .sameSite("None") //secure가 true일때 동작한다.
@@ -47,6 +49,7 @@ public class CookieUtils {
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         } else {
+            log.info("CookieUtils - 기본 프로파일");
             Cookie cookie = new Cookie(name, value);
             cookie.setPath(path);
             cookie.setMaxAge(maxAge);
