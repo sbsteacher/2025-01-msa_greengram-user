@@ -3,7 +3,12 @@ package com.green.greengram.configuration.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SerializationUtils;
 
@@ -12,7 +17,10 @@ import java.util.Base64;
 //쿠키에 데이터 담고 빼고 할 때 사용하는 객체
 @Slf4j
 @Component //빈등록
+@RequiredArgsConstructor
 public class CookieUtils {
+
+    private final Environment environment;
 
     public void setCookie(HttpServletResponse res, String name, Object value, int maxAge, String path) {
         this.setCookie(res, name, serializeObject(value), maxAge, path);
@@ -26,20 +34,25 @@ public class CookieUtils {
     path: 설정한 경로에 요청이 갈 때만 쿠키가 전달된다.
      */
     public void setCookie(HttpServletResponse response, String name, String value, int maxAge, String path) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath(path);
-        cookie.setMaxAge(maxAge);
-        cookie.setHttpOnly(true); //보안 쿠키 설정
-        response.addCookie(cookie);
-//        ResponseCookie cookie = ResponseCookie.from(name, value)
-//                .path(path)
-//                //.sameSite("None") //secure가 true일때 동작한다.
-//                .httpOnly(true)
-//                .secure(false) //https일 때만 쿠키 전송된다.
-//                .maxAge(maxAge)
-//                .build();
-//
-//        response.addHeader("Set-Cookie", cookie.toString());
+        String[] activeProfiles = environment.getActiveProfiles();
+        if(activeProfiles[0].equals("prod")) {
+            ResponseCookie cookie = ResponseCookie.from(name, value)
+                    .path(path)
+                    .sameSite("None") //secure가 true일때 동작한다.
+                    .httpOnly(true)
+                    .secure(true) //https일 때만 쿠키 전송된다.
+                    .maxAge(maxAge)
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        } else {
+            Cookie cookie = new Cookie(name, value);
+            cookie.setPath(path);
+            cookie.setMaxAge(maxAge);
+            cookie.setHttpOnly(true); //보안 쿠키 설정
+            response.addCookie(cookie);
+        }
+
     }
 
     public String getValue(HttpServletRequest request, String name) {

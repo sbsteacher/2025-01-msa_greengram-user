@@ -30,7 +30,6 @@ spring:
     url: jdbc:log4jdbc:mariadb://192.168.0.74/greengram_user
     username: root
     password: green502
-
   jpa:
     hibernate:
       ddl-auto: update
