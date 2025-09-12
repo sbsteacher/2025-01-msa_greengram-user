@@ -35,6 +35,7 @@ public class CookieUtils {
      */
     public void setCookie(HttpServletResponse response, String name, String value, int maxAge, String path) {
         String[] activeProfiles = environment.getActiveProfiles();
+        log.info("profile: {}", activeProfiles[0]);
         if(activeProfiles[0].equals("prod")) {
             ResponseCookie cookie = ResponseCookie.from(name, value)
                     .path(path)
@@ -42,6 +43,7 @@ public class CookieUtils {
                     .httpOnly(true)
                     .secure(true) //https일 때만 쿠키 전송된다.
                     .maxAge(maxAge)
+                    .domain("greenart.n-e.kr")
                     .build();
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
