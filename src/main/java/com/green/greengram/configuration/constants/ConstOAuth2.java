@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
+//테스트
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "constants.oauth2")
 public class ConstOAuth2 {
