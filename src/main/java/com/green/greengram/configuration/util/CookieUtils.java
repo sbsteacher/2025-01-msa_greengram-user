@@ -18,10 +18,7 @@ import java.util.Base64;
 //쿠키에 데이터 담고 빼고 할 때 사용하는 객체
 @Slf4j
 @Component //빈등록
-@RequiredArgsConstructor
 public class CookieUtils {
-
-    private final Environment environment;
 
     public void setCookie(HttpServletResponse res, String name, Object value, int maxAge, String path) {
         this.setCookie(res, name, serializeObject(value), maxAge, path);
@@ -35,28 +32,13 @@ public class CookieUtils {
     path: 설정한 경로에 요청이 갈 때만 쿠키가 전달된다.
      */
     public void setCookie(HttpServletResponse response, String name, String value, int maxAge, String path) {
-        String[] activeProfiles = environment.getActiveProfiles();
-
-        if(Arrays.asList(activeProfiles).contains("prod")) {
-            log.info("CookieUtils - 프로파일에 prod가 있음");
-            ResponseCookie cookie = ResponseCookie.from(name, value)
-                    .path(path)
-                    .sameSite("None") //secure가 true일때 동작한다.
-                    .httpOnly(true)
-                    .secure(true) //https일 때만 쿠키 전송된다.
-                    .maxAge(maxAge)
-                    .build();
-
-            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        } else {
             log.info("CookieUtils - 기본 프로파일");
             Cookie cookie = new Cookie(name, value);
             cookie.setPath(path);
             cookie.setMaxAge(maxAge);
             cookie.setHttpOnly(true); //보안 쿠키 설정
+            cookie.setSecure(true);
             response.addCookie(cookie);
-        }
-
     }
 
     public String getValue(HttpServletRequest request, String name) {
