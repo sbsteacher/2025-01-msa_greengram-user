@@ -44,7 +44,6 @@ public class CookieUtils {
                     .sameSite("None") //secure가 true일때 동작한다.
                     .httpOnly(true)
                     .secure(true) //https일 때만 쿠키 전송된다.
-                    .domain("https://greenart.n-e.kr")
                     .maxAge(maxAge)
                     .build();
 
