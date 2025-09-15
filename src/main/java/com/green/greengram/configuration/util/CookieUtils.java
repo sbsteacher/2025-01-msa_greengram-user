@@ -35,6 +35,7 @@ public class CookieUtils {
             log.info("CookieUtils - 기본 프로파일");
             Cookie cookie = new Cookie(name, value);
             cookie.setPath(path);
+            cookie.setDomain("greenart.n-e.kr");
             cookie.setMaxAge(maxAge);
             cookie.setHttpOnly(true); //보안 쿠키 설정
             cookie.setSecure(true);
