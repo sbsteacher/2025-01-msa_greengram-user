@@ -18,10 +18,12 @@ import java.util.Base64;
 //쿠키에 데이터 담고 빼고 할 때 사용하는 객체
 @Slf4j
 @Component //빈등록
+@RequiredArgsConstructor
 public class CookieUtils {
+    private final Environment environment; //실행되는 프로파일 정보를 얻기 위한 객체 DI
 
-    public void setCookie(HttpServletResponse res, String name, Object value, int maxAge, String path) {
-        this.setCookie(res, name, serializeObject(value), maxAge, path);
+    public void setCookie(HttpServletResponse res, String name, Object value, int maxAge, String path, String domain) {
+        this.setCookie(res, name, serializeObject(value), maxAge, path, domain);
     }
 
     /*
@@ -31,15 +33,35 @@ public class CookieUtils {
     maxAge: 쿠키에 담긴 벨류의 유효 기간
     path: 설정한 경로에 요청이 갈 때만 쿠키가 전달된다.
      */
-    public void setCookie(HttpServletResponse response, String name, String value, int maxAge, String path) {
+    public void setCookie(HttpServletResponse response, String name, String value, int maxAge, String path, String domain) {
+        /*
+            쿠버네티스에서 실행되면 프로파일 2개로 실행(prod, kubernetes)
+            prod는 도커 이미지를 만들 때 실행명령어에 prod로 서버를 기동하라는 내용 포함되어 있음
+            kubernetes는 쿠버네티스가 서버 기동할 때 포함 시킴
+         */
+        String[] activeProfiles = environment.getActiveProfiles();
+
+        if(domain != null && Arrays.asList(activeProfiles).contains("prod")) { //프로파일에 prod가 포함되어 있는지 확인
+            //쿠키 생성 방법 (1) ResponseCookie.from 스태틱 메소드 이용
+            log.info("CookieUtils - 프로파일에 prod가 있음");
+            ResponseCookie cookie = ResponseCookie.from(name, value)
+                    .path(path)
+                    .maxAge(maxAge)
+                    .httpOnly(true)
+                    .domain(domain)
+                    .secure(true) //https일 때만 쿠키 전송된다.
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        } else {
+            //쿠키 생성 방법 (2) Cookie 객체 생성
             log.info("CookieUtils - 기본 프로파일");
             Cookie cookie = new Cookie(name, value);
             cookie.setPath(path);
-            cookie.setDomain("greenart.n-e.kr");
             cookie.setMaxAge(maxAge);
             cookie.setHttpOnly(true); //보안 쿠키 설정
-            cookie.setSecure(true);
             response.addCookie(cookie);
+        }
     }
 
     public String getValue(HttpServletRequest request, String name) {
@@ -81,7 +103,7 @@ public class CookieUtils {
         return null;
     }
 
-    public void deleteCookie(HttpServletResponse response, String name, String path) {
-        setCookie(response, name, null, 0, path);
+    public void deleteCookie(HttpServletResponse response, String name, String path, String domain) {
+        setCookie(response, name, null, 0, path, domain);
     }
 }

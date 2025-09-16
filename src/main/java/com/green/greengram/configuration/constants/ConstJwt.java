@@ -1,30 +1,30 @@
 package com.green.greengram.configuration.constants;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Getter
 @ConfigurationProperties(prefix = "constants.jwt")
 @RequiredArgsConstructor
 @ToString
 public class ConstJwt {
-    private final String issuer;
-    private final String schema;
-    private final String bearerFormat;
+    public final String issuer;
+    public final String schema;
+    public final String bearerFormat;
 
-    private final String claimKey;
-    private final String headerKey;
-    private final String secretKey;
+    public final String claimKey;
+    public final String headerKey;
+    public final String secretKey;
 
-    private final String accessTokenCookieName;
-    private final String accessTokenCookiePath;
-    private final int accessTokenCookieValiditySeconds;
-    private final int accessTokenValidityMilliseconds;
+    public final String domain;
 
-    private final String refreshTokenCookieName;
-    private final String refreshTokenCookiePath;
-    private final int refreshTokenCookieValiditySeconds;
-    private final int refreshTokenValidityMilliseconds;
+    public final String accessTokenCookieName;
+    public final String accessTokenCookiePath;
+    public final int accessTokenCookieValiditySeconds;
+    public final int accessTokenValidityMilliseconds;
+
+    public final String refreshTokenCookieName;
+    public final String refreshTokenCookiePath;
+    public final int refreshTokenCookieValiditySeconds;
+    public final int refreshTokenValidityMilliseconds;
 }
