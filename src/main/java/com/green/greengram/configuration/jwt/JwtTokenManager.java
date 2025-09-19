@@ -49,7 +49,10 @@ public class JwtTokenManager {
     }
 
     public void deleteAccessTokenInCookie(HttpServletResponse response) {
-        cookieUtils.deleteCookie(response, constJwt.accessTokenCookieName, constJwt.accessTokenCookiePath, constJwt.domain);
+        cookieUtils.deleteCookie(response
+                , constJwt.accessTokenCookieName
+                , constJwt.accessTokenCookiePath
+                , constJwt.domain);
     }
 
     public String generateRefreshToken(JwtUser jwtUser) {
@@ -61,11 +64,19 @@ public class JwtTokenManager {
     }
 
     public void setRefreshTokenInCookie(HttpServletResponse response, String refreshToken) {
-        cookieUtils.setCookie(response, constJwt.refreshTokenCookieName, refreshToken, constJwt.refreshTokenCookieValiditySeconds, constJwt.refreshTokenCookiePath, constJwt.domain);
+        cookieUtils.setCookie(response
+                            , constJwt.refreshTokenCookieName
+                            , refreshToken
+                            , constJwt.refreshTokenCookieValiditySeconds
+                            , constJwt.refreshTokenCookiePath
+                            , constJwt.domain);
     }
 
     public void deleteRefreshTokenInCookie(HttpServletResponse response) {
-        cookieUtils.deleteCookie(response, constJwt.refreshTokenCookieName, constJwt.refreshTokenCookiePath, constJwt.domain);
+        cookieUtils.deleteCookie(response
+                                , constJwt.refreshTokenCookieName
+                                , constJwt.refreshTokenCookiePath
+                                , constJwt.domain);
     }
 
     public String getRefreshTokenFromCookie(HttpServletRequest request) {

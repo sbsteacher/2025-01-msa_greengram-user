@@ -1,6 +1,8 @@
 constants:
   file:
     upload-directory: /home/download
+  jwt:
+    refresh-token-cookie-path: /greengram-api/api/user/reissue
 
 eureka:
   client:
