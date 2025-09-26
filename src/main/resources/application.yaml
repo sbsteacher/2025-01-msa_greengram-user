@@ -53,6 +53,12 @@ spring:
   application:
     name: greengram-user
   datasource:
+    hikari:
+      maximum-pool-size: 20 # 풀에서 동시에 유지할 수 있는 최대 커넥션 개수 (주의: Pod 개수 × maximum-pool-size ≤ DB의 max_connections 범위 안에 들어야 함.)
+      minimum-idle: 5 # 풀에서 항상 유지할 최소 유휴 커넥션 수. (요청이 없는 상태에서도 5개는 DB 연결을 열어둠.)
+      idle-timeout: 300_000 # 5분, 유휴 상태인 커넥션을 풀에서 제거하기 전까지 기다리는 시간.
+      max-lifetime: 1_800_000 # 30분, 커넥션이 풀에 살아 있을 수 있는 최대 시간, DB 서버(MySQL) 쪽에서 커넥션을 강제로 끊을 수 있는데, 풀에서 미리 교체해줘야 안전. (MySQL의 wait_timeout 값보다 짧게 설정하는 게 안정적임.)
+      connection-timeout: 30_000 # 30초, 풀에서 커넥션을 빌려올 때 기다리는 최대 시간.
     url: jdbc:log4jdbc:mariadb://localhost/greengram_user
     username: root
     password: green502
